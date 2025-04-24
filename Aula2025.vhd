@@ -24,12 +24,15 @@ signal clkdisp,cs,din: std_logic;
 signal cont100k,contaux: std_logic_vector(23 downto 0);
 signal CLK100k: std_logic;
 
+signal aux1, aux2, aux3, aux4, aux5, aux6, aux7, aux8: std_logic;
+signal relogio: std_logic_vector(31 downto 0);
+
 begin
 
 
 
 LEDS <= "1111";
-num0<="0111";
+
 process(CLK27MHz)
    begin
 	if(CLK27MHz'event and CLK27MHz = '1') then
@@ -49,6 +52,27 @@ process(CLK27MHz)
    GPIO(0) <= clkdisp;
    GPIO(4) <= cs;
    GPIO(1) <= din;
+
+   U0: CONTBCD port map (CLK => CLK100k, CLR => BUT(0), ENIN => '1', UP => '1',
+                         ENOUT => aux1, Q => relogio(3 downto 0) );
+   U1: CONTBCD port map (CLK => CLK100k, CLR => BUT(0), ENIN => aux1, UP => '1',
+                         ENOUT => aux2, Q => relogio(7 downto 4) );
+   U2: CONTBCD port map (CLK => CLK100k, CLR => BUT(0), ENIN => aux2, UP => '1',
+                         ENOUT => aux3, Q => relogio(11 downto 8) ); --milissegundos
+   U3: CONTBCD port map (CLK => CLK100k, CLR => BUT(0), ENIN => aux3, UP => '1',
+                         ENOUT => aux4, Q => relogio(15 downto 12) );
+   U4: CONTBCD port map (CLK => CLK100k, CLR => BUT(0), ENIN => aux4, UP => '1',
+                         ENOUT => aux5, Q => relogio(19 downto 16) );
+   U5: CONTBCD port map (CLK => CLK100k, CLR => BUT(0), ENIN => aux5, UP => '1',
+                         ENOUT => aux6, Q => relogio(23 downto 20) ); --segundos
+   U6: CONTBCD port map (CLK => CLK100k, CLR => BUT(0), ENIN => aux6, UP => '1',
+                         ENOUT => aux7, Q => relogio(27 downto 24) );
+   U7: CONTBCD port map (CLK => CLK100k, CLR => BUT(0), ENIN => aux7, UP => '1',
+                         ENOUT => aux8, Q => relogio(31 downto 28) );
+
+   num7 <= relogio(31 downto 28);
+   num6 <= relogio(27 downto 24);
+   num5 <= relogio(23 downto 20);
 
 end comportamento;
 
